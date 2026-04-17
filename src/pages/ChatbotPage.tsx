@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { ArrowLeft, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { chatMessages as initialMessages, quickReplies, botResponses } from "@/data/mockData";
+import { chatMessages as initialMessages, quickReplies, botResponses } from "../data/mockData";
 
 type Message = { id: number; role: "user" | "bot"; text: string };
 
@@ -19,20 +19,19 @@ const ChatbotPage = () => {
 
   const sendMessage = (text: string) => {
     const userMsg: Message = { id: idRef.current++, role: "user", text };
-    setMessages((m) => [...m, userMsg]);
+    setMessages((current) => [...current, userMsg]);
     setInput("");
     setTyping(true);
 
     setTimeout(() => {
-      const reply = botResponses[text] || "🤔 I'm not sure about that. Try asking about routes, coaches, or timings!";
-      setMessages((m) => [...m, { id: idRef.current++, role: "bot", text: reply }]);
+      const reply = botResponses[text] || "I'm not sure about that yet. Try asking about routes, coaches, or timings.";
+      setMessages((current) => [...current, { id: idRef.current++, role: "bot", text: reply }]);
       setTyping(false);
     }, 1200);
   };
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      {/* Header */}
       <div className="flex items-center gap-3 px-4 pt-4 pb-3 border-b border-border/50">
         <button onClick={() => navigate(-1)} className="active:opacity-70">
           <ArrowLeft className="w-5 h-5 text-muted-foreground" />
@@ -43,35 +42,26 @@ const ChatbotPage = () => {
         </div>
       </div>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} animate-float-up`}
-          >
+        {messages.map((message) => (
+          <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} animate-float-up`}>
             <div
               className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm ${
-                msg.role === "user"
-                  ? "bg-primary text-primary-foreground rounded-br-md"
-                  : "bg-secondary text-foreground rounded-bl-md"
+                message.role === "user" ? "bg-primary text-primary-foreground rounded-br-md" : "bg-secondary text-foreground rounded-bl-md"
               }`}
             >
-              {msg.text}
+              {message.text}
             </div>
           </div>
         ))}
         {typing && (
           <div className="flex justify-start">
             <div className="bg-secondary px-4 py-3 rounded-2xl rounded-bl-md flex gap-1.5">
-              {[0, 1, 2].map((i) => (
+              {[0, 1, 2].map((index) => (
                 <div
-                  key={i}
+                  key={index}
                   className="w-2 h-2 rounded-full bg-muted-foreground"
-                  style={{
-                    animation: "typing-dot 1.4s infinite",
-                    animationDelay: `${i * 0.2}s`,
-                  }}
+                  style={{ animation: "typing-dot 1.4s infinite", animationDelay: `${index * 0.2}s` }}
                 />
               ))}
             </div>
@@ -80,25 +70,23 @@ const ChatbotPage = () => {
         <div ref={bottomRef} />
       </div>
 
-      {/* Quick replies */}
       <div className="px-4 pb-2 flex gap-2 overflow-x-auto">
-        {quickReplies.map((q) => (
+        {quickReplies.map((reply) => (
           <button
-            key={q}
-            onClick={() => sendMessage(q)}
+            key={reply}
+            onClick={() => sendMessage(reply)}
             className="shrink-0 px-3 py-1.5 rounded-full border border-primary/30 text-xs text-primary active:bg-primary/10 transition-colors"
           >
-            {q}
+            {reply}
           </button>
         ))}
       </div>
 
-      {/* Input */}
       <div className="px-4 pb-4 pt-2 flex gap-2">
         <input
           value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && input.trim() && sendMessage(input.trim())}
+          onChange={(event) => setInput(event.target.value)}
+          onKeyDown={(event) => event.key === "Enter" && input.trim() && sendMessage(input.trim())}
           placeholder="Ask Hamrahi AI..."
           className="flex-1 bg-secondary text-foreground text-sm px-4 py-3 rounded-2xl outline-none placeholder:text-muted-foreground"
         />

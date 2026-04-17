@@ -22,5 +22,13 @@
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "src/components/ui/**/*",
+    "src/hooks/**/*",
+    "src/components/NavLink (1).tsx",
+    "src/pages/* (1).tsx",
+    "src/test/**/*",
+    "src/**/*.test.tsx"
   ]
 }

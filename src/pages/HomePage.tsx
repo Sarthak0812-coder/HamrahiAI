@@ -1,8 +1,8 @@
+import { useState, useEffect } from "react";
 import { Search, AlertTriangle, Zap, Users, ChevronRight, Ticket, QrCode, X } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { alerts, type BookedTicket } from "@/data/mockData";
-import { useState, useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
+import { alerts, type BookedTicket } from "../data/mockData";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -14,11 +14,10 @@ const HomePage = () => {
   const [selectedTicket, setSelectedTicket] = useState<BookedTicket | null>(null);
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("hamrahi-tickets") || "[]");
+    const stored = JSON.parse(localStorage.getItem("hamrahi-tickets") || "[]") as BookedTicket[];
     setTickets(stored);
   }, [location]);
 
-  // Auto-show newly booked ticket
   useEffect(() => {
     const state = location.state as { showTicket?: BookedTicket } | null;
     if (state?.showTicket) {
@@ -27,17 +26,15 @@ const HomePage = () => {
     }
   }, [location.state]);
 
-  const activeTickets = tickets.filter(t => t.status === "active");
+  const activeTickets = tickets.filter((ticket) => ticket.status === "active");
 
   return (
     <div className="min-h-screen pb-24 px-4 pt-12">
-      {/* Header */}
       <div className="mb-6 animate-float-up" style={{ animationDelay: "0ms" }}>
-        <p className="text-muted-foreground text-sm">👋 {greeting}</p>
+        <p className="text-muted-foreground text-sm">{greeting}</p>
         <h1 className="text-2xl font-bold text-foreground">Commuter</h1>
       </div>
 
-      {/* Search */}
       <button
         onClick={() => navigate("/routes")}
         className="w-full glass-card p-4 mb-5 animate-float-up text-left active:scale-[0.98] transition-transform"
@@ -53,7 +50,6 @@ const HomePage = () => {
         </div>
       </button>
 
-      {/* Active tickets */}
       {activeTickets.length > 0 && (
         <div className="mb-5 animate-float-up" style={{ animationDelay: "100ms" }}>
           <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
@@ -61,7 +57,7 @@ const HomePage = () => {
             Active Tickets
           </h3>
           <div className="space-y-2">
-            {activeTickets.slice(0, 3).map(ticket => (
+            {activeTickets.slice(0, 3).map((ticket) => (
               <button
                 key={ticket.id}
                 onClick={() => setSelectedTicket(ticket)}
@@ -73,7 +69,7 @@ const HomePage = () => {
                       <span className="text-xs font-bold text-primary">{ticket.id}</span>
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-crowd-low/15 text-crowd-low font-semibold">ACTIVE</span>
                     </div>
-                    <p className="text-sm font-semibold text-foreground">{ticket.from} → {ticket.to}</p>
+                    <p className="text-sm font-semibold text-foreground">{ticket.from} to {ticket.to}</p>
                     <p className="text-xs text-muted-foreground">{ticket.date} • {ticket.modes.join(" + ")}</p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -86,9 +82,7 @@ const HomePage = () => {
         </div>
       )}
 
-      {/* Cards */}
       <div className="space-y-3">
-        {/* Crowd Status */}
         <button
           onClick={() => navigate("/coach")}
           className="w-full glass-card p-4 text-left animate-float-up active:scale-[0.98] transition-transform"
@@ -106,7 +100,6 @@ const HomePage = () => {
           </div>
         </button>
 
-        {/* Delays */}
         <div className="glass-card p-4 animate-float-up" style={{ animationDelay: "240ms" }}>
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-xl bg-destructive/20 flex items-center justify-center">
@@ -115,18 +108,19 @@ const HomePage = () => {
             <h3 className="text-sm font-semibold text-foreground">Delays & Alerts</h3>
           </div>
           <div className="space-y-2">
-            {alerts.map((a) => (
-              <div key={a.id} className="flex items-start gap-2">
-                <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${
-                  a.type === "delay" ? "bg-destructive" : a.type === "good" ? "bg-crowd-low" : "bg-primary"
-                }`} />
-                <p className="text-xs text-muted-foreground">{a.title}</p>
+            {alerts.map((alert) => (
+              <div key={alert.id} className="flex items-start gap-2">
+                <div
+                  className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${
+                    alert.type === "delay" ? "bg-destructive" : alert.type === "good" ? "bg-crowd-low" : "bg-primary"
+                  }`}
+                />
+                <p className="text-xs text-muted-foreground">{alert.title}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* AI Suggested Route */}
         <button
           onClick={() => navigate("/routes")}
           className="w-full glass-card p-4 text-left animate-float-up active:scale-[0.98] transition-transform"
@@ -144,7 +138,6 @@ const HomePage = () => {
           </div>
         </button>
 
-        {/* Crowd Detection */}
         <button
           onClick={() => navigate("/crowd-detection")}
           className="w-full glass-card p-4 text-left animate-float-up active:scale-[0.98] transition-transform"
@@ -163,10 +156,12 @@ const HomePage = () => {
         </button>
       </div>
 
-      {/* QR Ticket Modal */}
       {selectedTicket && (
-        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-md flex items-center justify-center px-6" onClick={() => setSelectedTicket(null)}>
-          <div className="glass-card p-6 w-full max-w-sm animate-float-up" onClick={e => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-50 bg-background/80 backdrop-blur-md flex items-center justify-center px-6"
+          onClick={() => setSelectedTicket(null)}
+        >
+          <div className="glass-card p-6 w-full max-w-sm animate-float-up" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-foreground">Your Ticket</h3>
               <button onClick={() => setSelectedTicket(null)} className="text-muted-foreground">
@@ -174,14 +169,12 @@ const HomePage = () => {
               </button>
             </div>
 
-            {/* QR Code */}
             <div className="flex justify-center mb-4">
               <div className="bg-white p-4 rounded-2xl">
                 <QRCodeSVG value={selectedTicket.qrData} size={180} level="H" />
               </div>
             </div>
 
-            {/* Details */}
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-xs text-muted-foreground">Ticket ID</span>
@@ -193,7 +186,7 @@ const HomePage = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-xs text-muted-foreground">Route</span>
-                <span className="text-xs text-foreground">{selectedTicket.from} → {selectedTicket.to}</span>
+                <span className="text-xs text-foreground">{selectedTicket.from} to {selectedTicket.to}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-xs text-muted-foreground">Modes</span>
