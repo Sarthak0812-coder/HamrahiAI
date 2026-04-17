@@ -1,26 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import BottomTabs from "@/components/BottomTabs";
+import FloatingChatButton from "@/components/FloatingChatButton";
+import HomePage from "@/pages/HomePage";
+import CoachView from "@/pages/CoachView";
+import RoutesPage from "@/pages/RoutesPage";
+import RouteDetails from "@/pages/RouteDetails";
+import AnalyticsPage from "@/pages/AnalyticsPage";
+import ProfilePage from "@/pages/ProfilePage";
+import ChatbotPage from "@/pages/ChatbotPage";
+import TicketingPage from "@/pages/TicketingPage";
+import CrowdDetection from "@/pages/CrowdDetection";
+import NotFound from "@/pages/NotFound";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const queryClient = new QueryClient();
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <ThemeProvider defaultTheme="dark">
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <div className="max-w-lg mx-auto min-h-screen relative">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/coach" element={<CoachView />} />
+              <Route path="/routes" element={<RoutesPage />} />
+              <Route path="/route-details" element={<RouteDetails />} />
+              <Route path="/ticketing" element={<TicketingPage />} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/chatbot" element={<ChatbotPage />} />
+              <Route path="/ticketing" element={<TicketingPage />} />
+              <Route path="/crowd-detection" element={<CrowdDetection />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <FloatingChatButton />
+            <BottomTabs />
+          </div>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
+  </QueryClientProvider>
+);
 
 export default App;
